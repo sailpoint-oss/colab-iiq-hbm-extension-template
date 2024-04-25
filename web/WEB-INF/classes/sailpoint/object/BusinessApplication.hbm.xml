@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" [<!ENTITY SailPointObject SYSTEM "classpath://sailpoint/object/SailPointObject.hbm.xml">]>
+<hibernate-mapping>
+    <class name="developer.days.sailpoint.object.BusinessApplication">
+        &SailPointObject;
+        <many-to-one name="custodian" class="sailpoint.object.Identity"/>
+        <many-to-one name="approversWorkgroup" class="sailpoint.object.Identity"/>
+        <property name="cmdbId" type="string" length="128"/>
+        <property name="approvalMode" type="string" length="128"/>
+        <property name="severity" type="string" length="128"/>
+        <property name="criticality" type="string" length="128"/>
+    </class>
+</hibernate-mapping>
