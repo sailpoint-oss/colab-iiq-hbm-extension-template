@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Rule PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Rule language="beanshell" name="Rule-CreateBusinessApplication" type="FieldValue">
+    <Source>
+        import developer.days.sailpoint.object.BusinessApplication;
+
+        String businessApplicationName = "SailpointDevs";
+        Identity approversWorkgroup = context.getObjectByName(Identity.class,businessApplicationName+" Approvers");
+        Identity owner = context.getObjectByName(Identity.class,"spadmin");
+
+        BusinessApplication bA = new BusinessApplication();
+        bA.setName("My new Business Application");
+        bA.setOwner(owner);
+        bA.SetApproversWorkgroup(approversWorkgroup);
+        bA.setApprovalMode("Manager, Owner");
+        bA.setCmdbId("123456");
+        bA.setCriticality("High");
+
+        context.saveObject(bA);
+        context.commitTransaction();
+    </Source>
+</Rule>

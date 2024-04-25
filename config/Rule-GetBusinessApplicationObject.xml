@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Rule PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Rule language="beanshell" name="Rule-GetBusinessApplication" type="FieldValue">
+    <Source>
+        import developer.days.sailpoint.object.BusinessApplication;
+
+        String businessApplicationName = "SailpointDevs";
+        Identity approversWorkgroup = context.getObjectByName(Identity.class,businessApplicationName+" Approvers");
+        Identity owner = context.getObjectByName(Identity.class,"spadmin");
+
+        BusinessApplication bA = context.getObjectByName(BusinessApplication.class,businessApplicationName);
+
+        QueryOptions qo = new QueryOptions();
+        qo.add(Filter.eq("criticality","High");
+
+        List listOfApps = context.getObjects(BusinessApplication.class,qo);
+        Iterator it = context.search(BusinessApplication.class,qo);
+    </Source>
+</Rule>
