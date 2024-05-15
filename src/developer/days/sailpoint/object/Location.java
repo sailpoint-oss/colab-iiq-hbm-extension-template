@@ -1,10 +1,12 @@
 package developer.days.sailpoint.object;
 
-import sailpoint.object.SailpointObject;
+import sailpoint.object.SailPointObject;
 import sailpoint.object.Identity;
 
-public class Location extends SailpointObject {
-    private String street;
+public class Location extends SailPointObject {
+    private static final long serialVersionUID = 1L;
+
+	private String street;
     private String country;
     private String state;
     private String zip;

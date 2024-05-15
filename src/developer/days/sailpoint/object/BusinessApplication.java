@@ -1,10 +1,11 @@
 package developer.days.sailpoint.object;
 
-import sailpoint.object.SailpointObject;
+import sailpoint.object.SailPointObject;
 import sailpoint.object.Identity;
 
-public class BusinessApplication extends SailpointObject {
+public class BusinessApplication extends SailPointObject {
     private static final long serialVersionUID=1L;
+
     private Identity custodian;
     private Identity approversWorkgroup;
     private String cmdbId;
