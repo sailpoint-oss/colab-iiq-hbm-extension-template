@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="services.standard.build.custom.hbmextension.xml">
+    <target name="post.expansion.hook">
+      <mkdir dir="${build}/hbmextension"/>
+
+      <unzip src="${build.iiqBinaryExtract}/WEB-INF/lib/identityiq.jar" dest="${build.iiqBinaryExtract}/WEB-INF/classes">
+        <patternset>
+          <include name="hibernate.cfg.xml"/>
+          <include name="sailpoint/tools/xml/XMLClasses.MF"/>
+        </patternset>
+      </unzip>
+
+      <!-- Hibernate Configuration -->
+      <replace file="${build.iiqBinaryExtract}/WEB-INF/classes/hibernate.cfg.xml" failOnNoReplacements="true">
+        <replacetoken><![CDATA[<mapping resource="sailpoint/object/WorkItemConfig.hbm.xml"/>]]></replacetoken>
+        <replacevalue><![CDATA[<mapping resource="sailpoint/object/WorkItemConfig.hbm.xml"/>
+    <mapping resource="sailpoint/object/BusinessApplication.hbm.xml"/>
+    <mapping resource="sailpoint/object/Location.hbm.xml"/>]]>
+        </replacevalue>
+      </replace>
+      <echo message="Patched file: ${build.iiqBinaryExtract}/WEB-INF/classes/hibernate.cfg.xml"/>
+
+      <!-- Add support for toXml() method -->
+      <echo file="${build.iiqBinaryExtract}/WEB-INF/classes/sailpoint/tools/xml/XMLClasses.MF" append="true">
+        <![CDATA[
+# Custom classes
+developer.days.sailpoint.object.BusinessApplication
+developer.days.sailpoint.object.Location
+        ]]>
+      </echo>
+      <echo message="Patched file: ${build.iiqBinaryExtract}/WEB-INF/classes/sailpoint/tools/xml/XMLClasses.MF"/>
+
+      <!-- Debug pages support -->
+      <path id="script.classpath">
+        <fileset dir="${build.iiqBinaryExtract}/WEB-INF/lib" includes="**/*.jar"/>
+      </path>
+
+      <script language="javascript" classpathref="script.classpath">// <![CDATA[
+          importClass(Packages.sailpoint.object.ClassLists);
+
+          with(new JavaImporter(java.lang, java.io)) {
+             var sb = new StringBuilder();
+
+             sb.append("package sailpoint.object;\n\n").append("public abstract class ClassLists {\n");
+             sb.append("    public static final Class[] MajorClasses;\n");
+             sb.append("    public static final Class[] ExportClasses;\n");
+             sb.append("    public static final Class[] VolumeClasses;\n\n");
+             sb.append("    static {\n");
+
+             var prefix = "        MajorClasses = new Class[] { ";
+             var length = ClassLists.MajorClasses.length;
+             for(var i = 0; i < length; ++i) {
+                 sb.append(prefix).append(ClassLists.MajorClasses[i].getSimpleName()).append(".class");
+                 prefix = ", ";
+             }
+             sb.append(", developer.days.sailpoint.object.BusinessApplication.class, developer.days.sailpoint.object.Location.class };\n\n")
+
+             var prefix = "        ExportClasses = new Class[] { ";
+             var length = ClassLists.ExportClasses.length;
+             for(var i = 0; i < length; ++i) {
+                 sb.append(prefix).append(ClassLists.ExportClasses[i].getSimpleName()).append(".class");
+                 prefix = ", ";
+             }
+             sb.append(" };\n\n")
+
+             var prefix = "        VolumeClasses = new Class[] { ";
+             var length = ClassLists.VolumeClasses.length;
+             for(var i = 0; i < length; ++i) {
+                 sb.append(prefix).append(ClassLists.VolumeClasses[i].getSimpleName()).append(".class");
+                 prefix = ", ";
+             }
+             sb.append(" };\n\n    }\n}\n");
+             self.getProject().setProperty("classLists.content", sb.toString());
+          }
+      // ]]></script>
+
+        <echo file="${build}/hbmextension/src/sailpoint/object/ClassLists.java" message="${classLists.content}"/>
+        <echo message="Created file: ${build}/hbmextension/src/sailpoint/object/ClassLists.java"/>
+		
+    	<mkdir dir="${build}/hbmextension/classes"/>
+    	
+        <javac source="1.8" target="1.8" destdir="${build}/hbmextension/classes" debug="true" classpathref="script.classpath" includeantruntime="last">
+            <src path="${build}/hbmextension/src"/>
+            <src path="../src"/>
+        </javac>
+        <copy todir="${build.iiqBinaryExtract}/WEB-INF/classes/sailpoint/object">
+            <fileset dir="${build}/hbmextension/classes/sailpoint/object">
+                <include name="ClassLists.class"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="post.war.hook" />
+
+    <target name="clean">
+    	<delete dir="${build}/hbmextension"/>
+    </target>
+</project>
